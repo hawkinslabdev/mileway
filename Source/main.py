@@ -1140,7 +1140,7 @@ def index() -> rx.Component:
         login_page()
     )
 
-# Create the app with proper State
+# Create the app with the state argument (for older Reflex versions)
 app = rx.App(
     state=State,
     stylesheets=[
