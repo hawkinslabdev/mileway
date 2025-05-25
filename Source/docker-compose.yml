@@ -1,0 +1,28 @@
+name: mileway
+services:
+  mileage-registration-app:
+    build: .
+    ports:
+      - "3010:3000"
+    environment:
+      - AUTH_USERNAME=${AUTH_USERNAME:-admin}
+      - AUTH_PASSWORD=${AUTH_PASSWORD:-password123}
+      - NODE_ENV=production
+    volumes:
+      - mileage-data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - mileway-network
+
+networks:
+  mileway-network:
+    driver: bridge
+
+volumes:
+  mileage-data:
+    driver: local
