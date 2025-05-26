@@ -1129,12 +1129,10 @@ def index() -> rx.Component:
         login_page()
     )
 
-# Create the app - CORRECT syntax for current Reflex version
 app = rx.App(
     stylesheets=[
         "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
     ]
 )
 
-# Add the main page route
 app.add_page(index, route="/", title="Kilometerregistratie PWA")
