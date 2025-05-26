@@ -105,22 +105,6 @@ De app stuurt JSON payloads zoals:
 
 Standaard ingesteld op €0,23 per kilometer (Nederlandse norm 2024). Aanpasbaar via instellingen.
 
-## Bestandsstructuur
-
-```
-├── main.py              # Hoofdapplicatie bestand
-├── requirements.txt     # Python dependencies
-├── Dockerfile          # Docker configuratie
-├── docker-compose.yml  # Docker Compose setup
-├── rxconfig.py         # Reflex configuratie
-├── manifest.json       # PWA manifest
-├── sw.js              # Service worker
-├── static/
-│   └── css/
-│       └── pwa-styles.css  # PWA-specifieke styles
-└── .env               # Omgevingsvariabelen
-```
-
 ## Development
 
 ### Lokale Development

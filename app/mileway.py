@@ -130,76 +130,7 @@ LOCALES = {
         'summary': 'Overzicht',
         'export': 'Exporteren',
         'monthly_overview': 'Maandoverzicht'
-    },
-    'en_US': {
-        'title': 'Mileage Registration',
-        'login': 'Login',
-        'logout': 'Logout',
-        'username': 'Username',
-        'password': 'Password',
-        'date': 'Date',
-        'start_location': 'Start Location',
-        'end_location': 'End Location',
-        'start_odometer': 'Start Odometer',
-        'end_odometer': 'End Odometer',
-        'distance_km': 'Distance (km)',
-        'purpose': 'Trip Purpose',
-        'trip_type': 'Trip Type',
-        'license_plate': 'License Plate',
-        'client_project': 'Client/Project',
-        'notes': 'Notes',
-        'fuel_cost': 'Fuel Cost (€)',
-        'parking_cost': 'Parking Cost (€)',
-        'toll_cost': 'Toll/Vignette (€)',
-        'add_trip': 'Add Trip',
-        'recent_trips': 'Recent Trips',
-        'vehicles': 'Vehicles',
-        'settings': 'Settings',
-        'webhook_url': 'Webhook URL',
-        'webhook_enabled': 'Webhook Enabled',
-        'mileage_rate': 'Mileage Rate (€)',
-        'save_settings': 'Save Settings',
-        'delete': 'Delete',
-        'edit': 'Edit',
-        'cancel': 'Cancel',
-        'save': 'Save',
-        'today': 'Today',
-        'this_week': 'This Week',
-        'this_month': 'This Month',
-        'invalid_login': 'Invalid credentials',
-        'trip_added': 'Trip added',
-        'trip_updated': 'Trip updated',
-        'trip_deleted': 'Trip deleted',
-        'settings_saved': 'Settings saved',
-        'total_km': 'Total km',
-        'total_cost': 'Total cost',
-        'reimbursement': 'Reimbursement',
-        'business': 'Business',
-        'private': 'Private',
-        'commute': 'Commute',
-        'add_vehicle': 'Add Vehicle',
-        'brand': 'Brand',
-        'model': 'Model',
-        'fuel_type': 'Fuel Type',
-        'lease_company': 'Lease Company',
-        'summary': 'Summary',
-        'export': 'Export',
-        'monthly_overview': 'Monthly Overview'
     }
-}
-
-# Trip types for Dutch tax purposes
-TRIP_TYPES = {
-    'nl_NL': [
-        ('zakelijk', 'Zakelijk'),
-        ('prive', 'Privé'),
-        ('woon_werk', 'Woon-werk verkeer')
-    ],
-    'en_US': [
-        ('business', 'Business'),
-        ('private', 'Private'),
-        ('commute', 'Commute')
-    ]
 }
 
 FUEL_TYPES = ['Benzine', 'Diesel', 'Hybride', 'Elektrisch', 'LPG']
@@ -236,7 +167,7 @@ class AppSettings(rx.Base):
     locale: str = "nl_NL"
     currency: str = "EUR"
     default_vehicle_id: Optional[int] = None
-    mileage_rate: float = 0.23  # Dutch standard rate 2024
+    mileage_rate: float = 0.23
 
 def get_db_path():
     """Get database path"""
@@ -292,6 +223,68 @@ class State(rx.State):
     monthly_business_km: int = 0
     monthly_reimbursement: float = 0.0
     
+    # Computed vars for localized text
+    @rx.var
+    def app_title(self) -> str:
+        return LOCALES.get(self.settings.locale, LOCALES['nl_NL']).get('title', 'Kilometerregistratie')
+    
+    @rx.var
+    def login_text(self) -> str:
+        return LOCALES.get(self.settings.locale, LOCALES['nl_NL']).get('login', 'Inloggen')
+    
+    @rx.var
+    def logout_text(self) -> str:
+        return LOCALES.get(self.settings.locale, LOCALES['nl_NL']).get('logout', 'Uitloggen')
+    
+    @rx.var
+    def username_text(self) -> str:
+        return LOCALES.get(self.settings.locale, LOCALES['nl_NL']).get('username', 'Gebruikersnaam')
+    
+    @rx.var
+    def password_text(self) -> str:
+        return LOCALES.get(self.settings.locale, LOCALES['nl_NL']).get('password', 'Wachtwoord')
+    
+    @rx.var
+    def vehicles_text(self) -> str:
+        return LOCALES.get(self.settings.locale, LOCALES['nl_NL']).get('vehicles', 'Voertuigen')
+    
+    @rx.var
+    def settings_text(self) -> str:
+        return LOCALES.get(self.settings.locale, LOCALES['nl_NL']).get('settings', 'Instellingen')
+    
+    @rx.var
+    def add_trip_text(self) -> str:
+        return LOCALES.get(self.settings.locale, LOCALES['nl_NL']).get('add_trip', 'Rit Toevoegen')
+    
+    @rx.var
+    def edit_text(self) -> str:
+        return LOCALES.get(self.settings.locale, LOCALES['nl_NL']).get('edit', 'Bewerken')
+    
+    @rx.var
+    def recent_trips_text(self) -> str:
+        return LOCALES.get(self.settings.locale, LOCALES['nl_NL']).get('recent_trips', 'Recente Ritten')
+    
+    @rx.var
+    def save_text(self) -> str:
+        return LOCALES.get(self.settings.locale, LOCALES['nl_NL']).get('save', 'Opslaan')
+    
+    @rx.var
+    def cancel_text(self) -> str:
+        return LOCALES.get(self.settings.locale, LOCALES['nl_NL']).get('cancel', 'Annuleren')
+    
+    @rx.var
+    def delete_text(self) -> str:
+        return LOCALES.get(self.settings.locale, LOCALES['nl_NL']).get('delete', 'Verwijderen')
+    
+    @rx.var
+    def vehicle_options(self) -> List[str]:
+        """Get vehicle IDs as string options for select component"""
+        return [str(v.id) for v in self.vehicles]
+    
+    def get_text(self, key: str) -> str:
+        """Get localized text"""
+        return LOCALES.get(self.settings.locale, LOCALES['nl_NL']).get(key, key)
+    
     def update_locale(self, locale: str):
         """Update locale setting"""
         self.settings.locale = locale
@@ -310,14 +303,6 @@ class State(rx.State):
     def update_webhook_enabled(self, enabled: bool):
         """Update webhook enabled setting"""
         self.settings.webhook_enabled = enabled
-    
-    def get_text(self, key: str) -> str:
-        """Get localized text"""
-        return LOCALES.get(self.settings.locale, LOCALES['nl_NL']).get(key, key)
-    
-    def get_trip_types(self):
-        """Get trip types for current locale"""
-        return TRIP_TYPES.get(self.settings.locale, TRIP_TYPES['nl_NL'])
     
     async def login(self):
         """Authenticate user"""
@@ -376,7 +361,7 @@ class State(rx.State):
               self.settings.default_vehicle_id, self.settings.mileage_rate))
         conn.commit()
         conn.close()
-        self.show_message(self.get_text("settings_saved"), "success")
+        self.show_message("Instellingen opgeslagen", "success")
         self.show_settings = False
     
     async def load_vehicles(self):
@@ -481,7 +466,7 @@ class State(rx.State):
                   end_odo, distance, self.purpose, self.trip_type, license_plate,
                   self.client_project, self.notes, float(self.fuel_cost or 0),
                   float(self.parking_cost or 0), float(self.toll_cost or 0), self.editing_id))
-            self.show_message(self.get_text("trip_updated"), "success")
+            self.show_message("Rit bijgewerkt", "success")
             self.editing_id = None
         else:
             # Insert new trip
@@ -494,48 +479,15 @@ class State(rx.State):
                   end_odo, distance, self.purpose, self.trip_type, license_plate,
                   self.client_project, self.notes, float(self.fuel_cost or 0),
                   float(self.parking_cost or 0), float(self.toll_cost or 0)))
-            self.show_message(self.get_text("trip_added"), "success")
+            self.show_message("Rit toegevoegd", "success")
         
         conn.commit()
         conn.close()
-        
-        # Send webhook notification
-        await self.send_webhook_notification(distance, self.trip_type)
         
         # Clear form and reload
         self.clear_trip_form()
         await self.load_trips()
         await self.calculate_monthly_summary()
-    
-    async def send_webhook_notification(self, distance: int, trip_type: str):
-        """Send webhook notification"""
-        if not self.settings.webhook_enabled or not self.settings.webhook_url:
-            return
-        
-        try:
-            reimbursement = distance * self.settings.mileage_rate if trip_type == 'zakelijk' else 0
-            
-            payload = {
-                "type": "mileage_entry",
-                "date": self.trip_date,
-                "distance_km": distance,
-                "trip_type": trip_type,
-                "start_location": self.start_location,
-                "end_location": self.end_location,
-                "purpose": self.purpose,
-                "reimbursement": round(reimbursement, 2),
-                "license_plate": next((v.license_plate for v in self.vehicles if str(v.id) == self.selected_vehicle_id), ""),
-                "timestamp": datetime.now().isoformat()
-            }
-            
-            requests.post(
-                self.settings.webhook_url,
-                json=payload,
-                headers={"Content-Type": "application/json"},
-                timeout=5
-            )
-        except Exception as e:
-            print(f"Webhook notification failed: {e}")
     
     async def load_trips(self):
         """Load recent trips"""
@@ -614,7 +566,7 @@ class State(rx.State):
         conn.commit()
         conn.close()
         
-        self.show_message(self.get_text("trip_deleted"), "success")
+        self.show_message("Rit verwijderd", "success")
         await self.load_trips()
         await self.calculate_monthly_summary()
     
@@ -648,17 +600,17 @@ def login_page() -> rx.Component:
     """Login page component"""
     return rx.container(
         rx.vstack(
-            rx.heading(State.get_text("title"), size="9", text_align="center", color="#1a365d"),
+            rx.heading(State.app_title, size="9", text_align="center", color="#1a365d"),
             rx.card(
                 rx.vstack(
                     rx.input(
-                        placeholder=State.get_text("username"),
+                        placeholder=State.username_text,
                         value=State.username,
                         on_change=State.set_username,
                         width="100%"
                     ),
                     rx.input(
-                        placeholder=State.get_text("password"),
+                        placeholder=State.password_text,
                         type="password",
                         value=State.password,
                         on_change=State.set_password,
@@ -669,7 +621,7 @@ def login_page() -> rx.Component:
                         rx.text(State.login_error, color="red", size="2")
                     ),
                     rx.button(
-                        State.get_text("login"),
+                        State.login_text,
                         on_click=State.login,
                         width="100%",
                         size="3",
@@ -697,8 +649,8 @@ def trip_form() -> rx.Component:
             rx.heading(
                 rx.cond(
                     State.editing_id,
-                    State.get_text("edit"),
-                    State.get_text("add_trip")
+                    State.edit_text,
+                    State.add_trip_text
                 ),
                 size="6"
             ),
@@ -709,10 +661,10 @@ def trip_form() -> rx.Component:
                     type="date",
                     value=State.trip_date,
                     on_change=State.set_trip_date,
-                    placeholder=State.get_text("date")
+                    placeholder="Datum"
                 ),
                 rx.select(
-                    [str(v.id) for v in State.vehicles],
+                    State.vehicle_options,
                     value=State.selected_vehicle_id,
                     on_change=State.set_selected_vehicle_id,
                     placeholder="Selecteer voertuig"
@@ -727,12 +679,12 @@ def trip_form() -> rx.Component:
                 rx.input(
                     value=State.start_location,
                     on_change=State.set_start_location,
-                    placeholder=State.get_text("start_location")
+                    placeholder="Vertreklocatie"
                 ),
                 rx.input(
                     value=State.end_location,
                     on_change=State.set_end_location,
-                    placeholder=State.get_text("end_location")
+                    placeholder="Bestemmingslocatie"
                 ),
                 direction="column",
                 spacing="2",
@@ -745,20 +697,22 @@ def trip_form() -> rx.Component:
                 rx.input(
                     type="number",
                     value=State.start_odometer,
-                    on_change=[State.set_start_odometer, State.calculate_distance],
-                    placeholder=State.get_text("start_odometer")
+                    on_change=State.set_start_odometer,
+                    on_blur=State.calculate_distance,
+                    placeholder="Kilometerstand begin"
                 ),
                 rx.input(
                     type="number",
                     value=State.end_odometer,
-                    on_change=[State.set_end_odometer, State.calculate_distance],
-                    placeholder=State.get_text("end_odometer")
+                    on_change=State.set_end_odometer,
+                    on_blur=State.calculate_distance,
+                    placeholder="Kilometerstand eind"
                 ),
                 rx.input(
                     type="number",
                     value=State.distance_km,
                     on_change=State.set_distance_km,
-                    placeholder=State.get_text("distance_km")
+                    placeholder="Afstand (km)"
                 ),
                 direction="column",
                 spacing="2",
@@ -771,17 +725,17 @@ def trip_form() -> rx.Component:
                     ["zakelijk", "prive", "woon_werk"],
                     value=State.trip_type,
                     on_change=State.set_trip_type,
-                    placeholder=State.get_text("trip_type")
+                    placeholder="Type rit"
                 ),
                 rx.input(
                     value=State.purpose,
                     on_change=State.set_purpose,
-                    placeholder=State.get_text("purpose")
+                    placeholder="Doel van de rit"
                 ),
                 rx.input(
                     value=State.client_project,
                     on_change=State.set_client_project,
-                    placeholder=State.get_text("client_project")
+                    placeholder="Klant/Project"
                 ),
                 direction="column",
                 spacing="2",
@@ -796,21 +750,21 @@ def trip_form() -> rx.Component:
                     step="0.01",
                     value=State.fuel_cost,
                     on_change=State.set_fuel_cost,
-                    placeholder=State.get_text("fuel_cost")
+                    placeholder="Brandstofkosten (€)"
                 ),
                 rx.input(
                     type="number",
                     step="0.01",
                     value=State.parking_cost,
                     on_change=State.set_parking_cost,
-                    placeholder=State.get_text("parking_cost")
+                    placeholder="Parkeerkosten (€)"
                 ),
                 rx.input(
                     type="number",
                     step="0.01",
                     value=State.toll_cost,
                     on_change=State.set_toll_cost,
-                    placeholder=State.get_text("toll_cost")
+                    placeholder="Tol/Vignetten (€)"
                 ),
                 direction="column",
                 spacing="2",
@@ -821,14 +775,14 @@ def trip_form() -> rx.Component:
             rx.text_area(
                 value=State.notes,
                 on_change=State.set_notes,
-                placeholder=State.get_text("notes"),
-                rows=2
+                placeholder="Opmerkingen",
+                rows="2"
             ),
             
             # Action buttons
             rx.flex(
                 rx.button(
-                    State.get_text("save"),
+                    State.save_text,
                     on_click=State.add_trip,
                     size="3",
                     color_scheme="blue"
@@ -836,7 +790,7 @@ def trip_form() -> rx.Component:
                 rx.cond(
                     State.editing_id,
                     rx.button(
-                        State.get_text("cancel"),
+                        State.cancel_text,
                         on_click=State.clear_trip_form,
                         variant="soft",
                         size="3"
@@ -857,15 +811,25 @@ def monthly_summary() -> rx.Component:
         rx.vstack(
             rx.heading("Maandoverzicht", size="6"),
             rx.flex(
-                rx.stat(
-                    rx.stat_label("Totaal km"),
-                    rx.stat_number(f"{State.monthly_km} km"),
-                    rx.stat_help_text("Deze maand")
+                rx.card(
+                    rx.vstack(
+                        rx.text("Totaal km", weight="bold", size="3"),
+                        rx.text(f"{State.monthly_km} km", size="5", weight="bold", color="blue"),
+                        rx.text("Deze maand", size="2", color="gray"),
+                        spacing="1",
+                        align="center"
+                    ),
+                    size="2"
                 ),
-                rx.stat(
-                    rx.stat_label("Zakelijk km"),
-                    rx.stat_number(f"{State.monthly_business_km} km"),
-                    rx.stat_help_text(f"€{State.monthly_reimbursement:.2f} vergoeding")
+                rx.card(
+                    rx.vstack(
+                        rx.text("Zakelijk km", weight="bold", size="3"),
+                        rx.text(f"{State.monthly_business_km} km", size="5", weight="bold", color="green"),
+                        rx.text(f"€{State.monthly_reimbursement:.2f} vergoeding", size="2", color="gray"),
+                        spacing="1",
+                        align="center"
+                    ),
+                    size="2"
                 ),
                 spacing="4",
                 width="100%",
@@ -881,7 +845,7 @@ def trips_list() -> rx.Component:
     """Trips list component"""
     return rx.card(
         rx.vstack(
-            rx.heading(State.get_text("recent_trips"), size="6"),
+            rx.heading(State.recent_trips_text, size="6"),
             rx.foreach(
                 State.trips,
                 lambda trip: rx.card(
@@ -891,8 +855,11 @@ def trips_list() -> rx.Component:
                             rx.text(f"{trip.distance_km} km", weight="bold", color="blue"),
                             rx.badge(
                                 trip.trip_type,
-                                color_scheme="green" if trip.trip_type == "zakelijk" else 
-                                           "gray" if trip.trip_type == "prive" else "orange"
+                                color_scheme=rx.cond(
+                                    trip.trip_type == "zakelijk",
+                                    "green",
+                                    rx.cond(trip.trip_type == "prive", "gray", "orange")
+                                )
                             ),
                             justify="between",
                             align="center",
@@ -905,19 +872,19 @@ def trips_list() -> rx.Component:
                             spacing="1"
                         ),
                         rx.cond(
-                            trip.license_plate,
+                            trip.license_plate != "",
                             rx.text(f"🚗 {trip.license_plate}", size="2", color="gray")
                         ),
                         rx.cond(
-                            trip.purpose,
+                            trip.purpose != "",
                             rx.text(f"📝 {trip.purpose}", size="2", color="gray")
                         ),
                         rx.cond(
-                            trip.client_project,
+                            trip.client_project != "",
                             rx.text(f"👥 {trip.client_project}", size="2", color="blue")
                         ),
                         rx.cond(
-                            trip.start_odometer and trip.end_odometer,
+                            (trip.start_odometer != None) & (trip.end_odometer != None),
                             rx.text(f"🔢 {trip.start_odometer} → {trip.end_odometer} km", size="2", color="gray")
                         ),
                         rx.cond(
@@ -926,13 +893,13 @@ def trips_list() -> rx.Component:
                         ),
                         rx.flex(
                             rx.button(
-                                State.get_text("edit"),
+                                State.edit_text,
                                 on_click=lambda trip_id=trip.id: State.edit_trip(trip_id),
                                 variant="soft",
                                 size="1"
                             ),
                             rx.button(
-                                State.get_text("delete"),
+                                State.delete_text,
                                 on_click=lambda trip_id=trip.id: State.delete_trip(trip_id),
                                 variant="soft",
                                 color_scheme="red",
@@ -956,28 +923,28 @@ def vehicles_dialog() -> rx.Component:
     """Vehicles management dialog"""
     return rx.dialog.root(
         rx.dialog.trigger(
-            rx.button(State.get_text("vehicles"), variant="soft")
+            rx.button(State.vehicles_text, variant="soft")
         ),
         rx.dialog.content(
-            rx.dialog.title(State.get_text("vehicles")),
+            rx.dialog.title(State.vehicles_text),
             rx.vstack(
                 # Add vehicle form
-                rx.text(State.get_text("add_vehicle"), weight="bold"),
+                rx.text("Voertuig Toevoegen", weight="bold"),
                 rx.input(
                     value=State.vehicle_license_plate,
                     on_change=State.set_vehicle_license_plate,
-                    placeholder=State.get_text("license_plate")
+                    placeholder="Kenteken"
                 ),
                 rx.flex(
                     rx.input(
                         value=State.vehicle_brand,
                         on_change=State.set_vehicle_brand,
-                        placeholder=State.get_text("brand")
+                        placeholder="Merk"
                     ),
                     rx.input(
                         value=State.vehicle_model,
                         on_change=State.set_vehicle_model,
-                        placeholder=State.get_text("model")
+                        placeholder="Model"
                     ),
                     spacing="2",
                     width="100%"
@@ -991,13 +958,13 @@ def vehicles_dialog() -> rx.Component:
                     rx.input(
                         value=State.vehicle_lease_company,
                         on_change=State.set_vehicle_lease_company,
-                        placeholder=State.get_text("lease_company")
+                        placeholder="Leasemaatschappij"
                     ),
                     spacing="2",
                     width="100%"
                 ),
                 rx.button(
-                    State.get_text("add_vehicle"),
+                    "Voertuig Toevoegen",
                     on_click=State.add_vehicle
                 ),
                 
@@ -1039,10 +1006,10 @@ def settings_dialog() -> rx.Component:
     """Settings dialog component"""
     return rx.dialog.root(
         rx.dialog.trigger(
-            rx.button(State.get_text("settings"), variant="soft")
+            rx.button(State.settings_text, variant="soft")
         ),
         rx.dialog.content(
-            rx.dialog.title(State.get_text("settings")),
+            rx.dialog.title(State.settings_text),
             rx.vstack(
                 rx.text("Taal/Locale:"),
                 rx.select(
@@ -1051,7 +1018,7 @@ def settings_dialog() -> rx.Component:
                     on_change=State.update_locale
                 ),
                 
-                rx.text(State.get_text("mileage_rate")),
+                rx.text("Kilometervergoeding (€)"),
                 rx.input(
                     type="number",
                     step="0.01",
@@ -1060,7 +1027,7 @@ def settings_dialog() -> rx.Component:
                     placeholder="0.23"
                 ),
                 
-                rx.text(State.get_text("webhook_url")),
+                rx.text("Webhook URL"),
                 rx.input(
                     value=State.settings.webhook_url,
                     on_change=State.update_webhook_url,
@@ -1072,18 +1039,18 @@ def settings_dialog() -> rx.Component:
                         checked=State.settings.webhook_enabled,
                         on_change=State.update_webhook_enabled
                     ),
-                    rx.text(State.get_text("webhook_enabled")),
+                    rx.text("Webhook Ingeschakeld"),
                     spacing="2",
                     align="center"
                 ),
                 
                 rx.flex(
                     rx.dialog.close(
-                        rx.button(State.get_text("cancel"), variant="soft")
+                        rx.button(State.cancel_text, variant="soft")
                     ),
                     rx.dialog.close(
                         rx.button(
-                            State.get_text("save_settings"),
+                            "Instellingen Opslaan",
                             on_click=State.save_settings
                         )
                     ),
@@ -1104,12 +1071,12 @@ def main_app() -> rx.Component:
         rx.vstack(
             # Header
             rx.flex(
-                rx.heading("🚗 " + State.get_text("title"), size="7", color="#1a365d"),
+                rx.heading(f"🚗 {State.app_title}", size="7", color="#1a365d"),
                 rx.flex(
                     vehicles_dialog(),
                     settings_dialog(),
                     rx.button(
-                        State.get_text("logout"),
+                        State.logout_text,
                         on_click=State.logout,
                         variant="soft"
                     ),
@@ -1126,9 +1093,12 @@ def main_app() -> rx.Component:
                 State.message,
                 rx.callout(
                     State.message,
-                    icon="info" if State.message_type != "error" else "alert-triangle",
-                    color="green" if State.message_type == "success" else 
-                          "red" if State.message_type == "error" else "blue",
+                    icon=rx.cond(State.message_type == "error", "alert-triangle", "info"),
+                    color=rx.cond(
+                        State.message_type == "success", 
+                        "green", 
+                        rx.cond(State.message_type == "error", "red", "blue")
+                    ),
                     size="2",
                     on_click=State.clear_message
                 )
