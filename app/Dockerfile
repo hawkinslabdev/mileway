@@ -15,8 +15,21 @@ COPY requirements.txt .
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY . .
+# Copy configuration
+COPY rxconfig.py .
+
+# Create the app directory structure
+RUN mkdir -p mileway
+
+# Copy application code to the correct location
+COPY mileway.py mileway/mileway.py
+
+# Create __init__.py to make it a Python package
+RUN touch mileway/__init__.py
+
+# Copy other files
+COPY manifest.json .
+COPY .env* ./
 
 # Create data directory for SQLite database
 RUN mkdir -p /app/data && chmod 755 /app/data
